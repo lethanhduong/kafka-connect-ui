@@ -16,10 +16,16 @@ jobs:
       IMAGE_NAME: kafka-connector-ui
     steps:
     - uses: actions/checkout@v3
+    - name: Build Source
+      run: |
+        npm install -g grunt-cli
+        grunt && cd dist && tar cvzf kafka-connect-ui.tar.gz . && mv kafka-connect-ui.tar.gz ../docker/
+        
+
     - name: Build the Docker image
       run: |
         pushd docker
-        docker build . --file Dockerfile --tag $DOCKERHUB_USERNAME/$IMAGE_NAME:$(date +%Y%m%d)
+        docker build . --file Dockerfile --tag $DOCKERHUB_USERNAME/$IMAGE_NAME:$(date +%Y%m%d-%s) --build-arg KAFKA_CONNECT_UI_VERSION=$(date +%Y%m%d)
         popd
 
     - name: Log in to Docker Hub
@@ -30,4 +36,4 @@ jobs:
 
     - name: Push Docker image
       run: |
-        docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:$(date +%Y%m%d)
+        docker push $DOCKERHUB_USERNAME/$IMAGE_NAME:$(date +%Y%m%d-%s)
