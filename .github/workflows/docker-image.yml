@@ -19,14 +19,13 @@ jobs:
     - name: Build the Docker image
       run: |
         pushd docker
-        # docker build . --file Dockerfile --tag $DOCKERHUB_USERNAME/$IMAGE_NAME:$(date +%Y%m%d)
+        docker build . --file Dockerfile --tag $DOCKERHUB_USERNAME/$IMAGE_NAME:$(date +%Y%m%d)
         popd
 
     - name: Log in to Docker Hub
       env:
           DOCKERHUB_TOKEN: ${{ secrets.DOCKERHUB_TOKEN }}
       run: |
-        echo $DOCKERHUB_USERNAME/$IMAGE_NAME:$(date +%Y%m%d)
         echo $DOCKERHUB_TOKEN | docker login --username $DOCKERHUB_USERNAME --password-stdin
 
     - name: Push Docker image
